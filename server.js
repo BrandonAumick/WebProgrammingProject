@@ -1,28 +1,23 @@
 const express = require("express");
 const app = express();
 
+async function main() {
+    app.use(express.static("client_stuff"));
+    app.use(express.urlencoded({extended: false}));
 
-/*app.get('/', (req, res) => {
-    res.sendFile('index.html', {root: __dirname});
-    res.write('<p>Test2</p>');
-    res.send();
-});*/
+    app.post('/', async (req, res) => {
+        info = await getPlayer(req.body.name1);
+        triumph = await getTriumph(info);
+        res.send(triumph.toString());
+    });
 
-app.use(express.static("client_stuff"));
-app.use(express.urlencoded({extended: false}));
+    // Start the web server
+    app.listen(3000, function() {
+        console.log("Listening on port 3000...");
+    });
+}
 
-app.post('/', (req, res) => {
-    playerOneInfo = getPlayer(req.body.name1);
-    res.send(getTriumph(playerOneInfo));
-});
-
-// Start the web server
-app.listen(3000, function() {
-    console.log("Listening on port 3000...");
- });
- 
-
-
+main();
 
 
 
@@ -54,15 +49,5 @@ app.listen(3000, function() {
      let response = await fetch(`https://www.bungie.net/Platform/Destiny2/${memberInfo['memberType']}/Profile/${memberInfo['memberId']}/?components=Records`, requestOptions);
      response = await response.json();
      return response["Response"]["profileRecords"]["data"]["lifetimeScore"];
- 
- }
- 
- 
- async function main() {
- 
-     memberInfo = await getPlayer('SharkBurn4');
-     score = await getTriumph(memberInfo);
-     console.log(score);
-     return score;
  
  }
