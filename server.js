@@ -2,6 +2,11 @@ const express = require("express");
 const app = express();
 const hbs = require('hbs');
 
+var myHeaders = new Headers();
+myHeaders.append("x-api-key", "b79ca68003714acf8ccf1a0848a37a5b");
+myHeaders.append("Content-Type", "text/plain");
+
+
 async function main() {
 
     app.use(express.static("homepage"));
@@ -10,10 +15,20 @@ async function main() {
     app.engine('html', hbs.__express);
 
     app.post('/', async (req, res) => {
-        let info = await getPlayer(req.body.name1);
-        let triumphScores = await getTriumph(info);
+        try {
+            var playerInfo = await getPlayer(req.body.name1);
+        } catch (err) {
+            //Temporary status code to stop the browser from waiting for a response. This is not actually a successful result.
+            res.status(204).send();
+            return;
+        }
+        let triumphScores = await getTriumph(playerInfo['memberId'], playerInfo['memberType']);
 
-        res.render("index", {LTriumph: triumphScores['lifetimeScore'], ATriumph: triumphScores['activeScore']});
+        res.render("index", {
+            playerName1: `${playerInfo['displayName']}#${playerInfo['displayCode']}`,
+            LTriumph: triumphScores['lifetimeScore'], 
+            ATriumph: triumphScores['activeScore'],
+        });
     });
 
     // Start the web server
@@ -24,11 +39,6 @@ async function main() {
 
 main();
 
-
-
- var myHeaders = new Headers();
- myHeaders.append("x-api-key", "b79ca68003714acf8ccf1a0848a37a5b");
- myHeaders.append("Content-Type", "text/plain");
  
  
  async function getPlayer(playerName) {
@@ -40,17 +50,24 @@ main();
          body: `{\"displayNamePrefix\" : \"${playerName}\"}`
      });
      response = await response.json();
+     if (!response["Response"]["searchResults"][0]) {
+        throw 'No results';
+     }
+
      var memberId = response["Response"]["searchResults"][0]["destinyMemberships"][0]["membershipId"];
      var memberType = response["Response"]["searchResults"][0]["destinyMemberships"][0]["membershipType"];
-     return {memberId: memberId, memberType: memberType};
+     var displayName = response["Response"]["searchResults"][0]["bungieGlobalDisplayName"];
+     var displayCode = response["Response"]["searchResults"][0]["bungieGlobalDisplayNameCode"].toString();
+
+     return {memberId: memberId, memberType: memberType, displayName: displayName, displayCode: displayCode};
  
  }
  
  
- async function getTriumph(memberInfo) {
+ async function getTriumph(memberId, memberType) {
  
      var requestOptions = { method: "Get", headers: myHeaders };
-     let response = await fetch(`https://www.bungie.net/Platform/Destiny2/${memberInfo['memberType']}/Profile/${memberInfo['memberId']}/?components=Records`, requestOptions);
+     let response = await fetch(`https://www.bungie.net/Platform/Destiny2/${memberType}/Profile/${memberId}/?components=Records`, requestOptions);
      response = await response.json();
      let lifetimeScore = response["Response"]["profileRecords"]["data"]["lifetimeScore"].toString();
      let activeScore = response["Response"]["profileRecords"]["data"]["activeScore"].toString();
