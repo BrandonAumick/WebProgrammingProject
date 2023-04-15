@@ -1,14 +1,19 @@
 const express = require("express");
 const app = express();
+const hbs = require('hbs');
 
 async function main() {
-    app.use(express.static("client_stuff"));
+
+    app.use(express.static("homepage"));
     app.use(express.urlencoded({extended: false}));
+    app.set("view engine", "html");
+    app.engine('html', hbs.__express);
 
     app.post('/', async (req, res) => {
-        info = await getPlayer(req.body.name1);
-        triumph = await getTriumph(info);
-        res.send(triumph.toString());
+        let info = await getPlayer(req.body.name1);
+        let triumphScores = await getTriumph(info);
+
+        res.render("index", {LTriumph: triumphScores['lifetimeScore'], ATriumph: triumphScores['activeScore']});
     });
 
     // Start the web server
@@ -37,7 +42,6 @@ main();
      response = await response.json();
      var memberId = response["Response"]["searchResults"][0]["destinyMemberships"][0]["membershipId"];
      var memberType = response["Response"]["searchResults"][0]["destinyMemberships"][0]["membershipType"];
-     console.log([memberId, memberType]);
      return {memberId: memberId, memberType: memberType};
  
  }
@@ -48,6 +52,8 @@ main();
      var requestOptions = { method: "Get", headers: myHeaders };
      let response = await fetch(`https://www.bungie.net/Platform/Destiny2/${memberInfo['memberType']}/Profile/${memberInfo['memberId']}/?components=Records`, requestOptions);
      response = await response.json();
-     return response["Response"]["profileRecords"]["data"]["lifetimeScore"];
+     let lifetimeScore = response["Response"]["profileRecords"]["data"]["lifetimeScore"].toString();
+     let activeScore = response["Response"]["profileRecords"]["data"]["activeScore"].toString();
+     return {lifetimeScore: lifetimeScore, activeScore: activeScore};
  
  }
