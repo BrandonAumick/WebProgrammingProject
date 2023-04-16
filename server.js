@@ -75,12 +75,6 @@ main();
  
      var requestOptions = { method: "Get", headers: myHeaders };
 
-     //let basicInfoResponse = await fetch(`https://www.bungie.net/Platform/Destiny2/${memberType}/Profile/${memberId}/?components=Records,Characters,SocialCommendations,Profiles`, requestOptions);
-     //basicInfoResponse = await basicInfoResponse.json();
-
-     //let historicalInfoResponse = await fetch(`https://www.bungie.net/Platform/Destiny2/${memberType}/Account/${memberId}/Stats/?groups=1`, requestOptions);
-     //historicalInfoResponse = await historicalInfoResponse.json();
-
      let responses = [
         fetch(`https://www.bungie.net/Platform/Destiny2/${memberType}/Profile/${memberId}/?components=Records,Characters,SocialCommendations,Profiles,ProfileProgression`, requestOptions),
         fetch(`https://www.bungie.net/Platform/Destiny2/${memberType}/Account/${memberId}/Stats/?groups=1`, requestOptions)
