@@ -15,6 +15,7 @@ async function main() {
     app.engine('html', hbs.__express);
 
     app.post('/', async (req, res) => {
+        
         try {
             var playerInfo = await getPlayer(req.body.name1);
         } catch (err) {
@@ -22,13 +23,19 @@ async function main() {
             res.status(204).send();
             return;
         }
-        let triumphScores = await getTriumph(playerInfo['memberId'], playerInfo['memberType']);
+        let playerStats = await getStats(playerInfo['memberId'], playerInfo['memberType']);
 
         res.render("index", {
+            emblemPath1: playerStats['emblemPath'],
             playerName1: `${playerInfo['displayName']}#${playerInfo['displayCode']}`,
-            LTriumph: triumphScores['lifetimeScore'], 
-            ATriumph: triumphScores['activeScore'],
+            lifetimeTriumph1: playerStats['lifetimeScore'], 
+            activeTriumph1: playerStats['activeScore'],
+            commendationScore1: playerStats['commendationScore'],
+            guardianRank1: playerStats['guardianRank'],
+            seasonalLevel1: playerStats['seasonalLevel'],
+            timePlayed1: playerStats['timePlayed']
         });
+
     });
 
     // Start the web server
@@ -54,23 +61,46 @@ main();
         throw 'No results';
      }
 
-     var memberId = response["Response"]["searchResults"][0]["destinyMemberships"][0]["membershipId"];
-     var memberType = response["Response"]["searchResults"][0]["destinyMemberships"][0]["membershipType"];
-     var displayName = response["Response"]["searchResults"][0]["bungieGlobalDisplayName"];
-     var displayCode = response["Response"]["searchResults"][0]["bungieGlobalDisplayNameCode"].toString();
-
-     return {memberId: memberId, memberType: memberType, displayName: displayName, displayCode: displayCode};
+     return {
+        memberId: response["Response"]["searchResults"][0]["destinyMemberships"][0]["membershipId"], 
+        memberType: response["Response"]["searchResults"][0]["destinyMemberships"][0]["membershipType"], 
+        displayName: response["Response"]["searchResults"][0]["bungieGlobalDisplayName"], 
+        displayCode: response["Response"]["searchResults"][0]["bungieGlobalDisplayNameCode"].toString()
+    };
  
  }
  
  
- async function getTriumph(memberId, memberType) {
+ async function getStats(memberId, memberType) {
  
      var requestOptions = { method: "Get", headers: myHeaders };
-     let response = await fetch(`https://www.bungie.net/Platform/Destiny2/${memberType}/Profile/${memberId}/?components=Records`, requestOptions);
-     response = await response.json();
-     let lifetimeScore = response["Response"]["profileRecords"]["data"]["lifetimeScore"].toString();
-     let activeScore = response["Response"]["profileRecords"]["data"]["activeScore"].toString();
-     return {lifetimeScore: lifetimeScore, activeScore: activeScore};
+
+     //let basicInfoResponse = await fetch(`https://www.bungie.net/Platform/Destiny2/${memberType}/Profile/${memberId}/?components=Records,Characters,SocialCommendations,Profiles`, requestOptions);
+     //basicInfoResponse = await basicInfoResponse.json();
+
+     //let historicalInfoResponse = await fetch(`https://www.bungie.net/Platform/Destiny2/${memberType}/Account/${memberId}/Stats/?groups=1`, requestOptions);
+     //historicalInfoResponse = await historicalInfoResponse.json();
+
+     let responses = [
+        fetch(`https://www.bungie.net/Platform/Destiny2/${memberType}/Profile/${memberId}/?components=Records,Characters,SocialCommendations,Profiles,ProfileProgression`, requestOptions),
+        fetch(`https://www.bungie.net/Platform/Destiny2/${memberType}/Account/${memberId}/Stats/?groups=1`, requestOptions)
+     ];
+     responses = await Promise.all(responses);
+     responses = [responses[0].json(), responses[1].json()];
+     responses = await Promise.all(responses);
+
+
+    //Returns a dictonary of information selected from the API responses
+     return {
+        lifetimeScore: responses[0]["Response"]["profileRecords"]["data"]["lifetimeScore"].toString(), 
+        activeScore: responses[0]["Response"]["profileRecords"]["data"]["activeScore"].toString(), 
+        emblemPath: Object.values(responses[0]["Response"]["characters"]["data"])[0]["emblemPath"], 
+        commendationScore: responses[0]["Response"]["profileCommendations"]["data"]["totalScore"].toString(),
+        guardianRank: responses[0]["Response"]["profile"]["data"]["currentGuardianRank"].toString(),
+        //Xp number divded by 100,000 to get number of progressed levels. +1 to account for starting at level 1.
+        seasonalLevel: Math.floor((responses[0]["Response"]["profileProgression"]["data"]["seasonalArtifact"]["powerBonusProgression"]["currentProgress"]/100000) + 1).toString(),
+        //Time divided by 3,600 to convert from seconds to hours
+        timePlayed: Math.floor(responses[1]["Response"]["mergedAllCharacters"]["merged"]["allTime"]["secondsPlayed"]["basic"]["value"]/3600)
+    };
  
  }
