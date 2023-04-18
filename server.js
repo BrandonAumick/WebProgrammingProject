@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 const hbs = require('hbs');
+const mysql = require('mysql');
 
 var myHeaders = new Headers();
 myHeaders.append("x-api-key", "b79ca68003714acf8ccf1a0848a37a5b");
@@ -79,10 +80,10 @@ main();
         fetch(`https://www.bungie.net/Platform/Destiny2/${memberType}/Profile/${memberId}/?components=Records,Characters,SocialCommendations,Profiles,ProfileProgression`, requestOptions),
         fetch(`https://www.bungie.net/Platform/Destiny2/${memberType}/Account/${memberId}/Stats/?groups=1`, requestOptions)
      ];
+
      responses = await Promise.all(responses);
      responses = [responses[0].json(), responses[1].json()];
      responses = await Promise.all(responses);
-
 
     //Returns a dictonary of information selected from the API responses
      return {
@@ -98,3 +99,45 @@ main();
     };
  
  }
+
+
+ function makeDb( config ) {
+
+    const connection = mysql.createConnection( config );  return {
+      query( sql, args ) {
+        return util.promisify( connection.query )
+          .call( connection, sql, args );
+      },
+      close() {
+        return util.promisify( connection.end ).call( connection );
+      }
+    };
+
+  }
+
+
+ async function addToDatabase(playerInfo, playerStats) {
+
+    let db = makeDb({
+        host: "localhost",
+        user: "root",
+        password: "&r!Xfy%te7uD#3UZ6S&C"
+    });
+
+    await db.query('USE destiny;');
+
+    if (await db.query(`SELECT * FROM players WHERE playerName=${playerInfo['displayName']}`)) {
+        await db.query(`DELETE FROM players WHERE playerName=${playerInfo['displayName']}`);
+    }
+
+    await db.query(`INSERT INTO players VALUES (
+                '${playerInfo['displayName']}', 
+                ${parseInt(playerStats['lifetimeScore'])}, 
+                ${parseInt(playerStats['activeScore'])}, 
+                ${parseInt(playerStats['commendationScore'])}, 
+                ${parseInt(playerStats['seasonalLevel'])},
+                ${parseInt(playerStats['timePlayed'])});`);
+
+    db.close();
+
+  }
