@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const hbs = require('hbs');
 const mysql = require('mysql');
+const util = require('util');
 
 var myHeaders = new Headers();
 myHeaders.append("x-api-key", "b79ca68003714acf8ccf1a0848a37a5b");
@@ -20,21 +21,38 @@ async function main() {
         try {
             var playerInfo = await getPlayer(req.body.name1);
         } catch (err) {
-            //Temporary status code to stop the browser from waiting for a response. This is not actually a successful result.
-            res.status(204).send();
+            res.render("index", {
+                errorMessage: "Could not find player",
+                emblemPath1: "https://mykimini.com/wp-content/uploads/blank-link.png",
+                playerName1: "",
+                lifetimeTriumph1: "", 
+                activeTriumph1: "",
+                commendationScore1: "",
+                guardianRank1: "",
+                seasonalLevel1: "",
+                timePlayed1: "",
+                displayInfo: 'hidden',
+                displayError: 'shown'
+            });
             return;
         }
+        
         let playerStats = await getStats(playerInfo['memberId'], playerInfo['memberType']);
 
+        addToDatabase(playerInfo, playerStats);
+
         res.render("index", {
-            emblemPath1: playerStats['emblemPath'],
+            errorMessage: "",
+            emblemPath1: `https://www.bungie.net${playerStats['emblemPath']}`,
             playerName1: `${playerInfo['displayName']}#${playerInfo['displayCode']}`,
             lifetimeTriumph1: playerStats['lifetimeScore'], 
             activeTriumph1: playerStats['activeScore'],
             commendationScore1: playerStats['commendationScore'],
             guardianRank1: playerStats['guardianRank'],
             seasonalLevel1: playerStats['seasonalLevel'],
-            timePlayed1: playerStats['timePlayed']
+            timePlayed1: playerStats['timePlayed'],
+            displayInfo: 'shown',
+            displayError: 'hidden'
         });
 
     });
@@ -126,9 +144,7 @@ main();
 
     await db.query('USE destiny;');
 
-    if (await db.query(`SELECT * FROM players WHERE playerName=${playerInfo['displayName']}`)) {
-        await db.query(`DELETE FROM players WHERE playerName=${playerInfo['displayName']}`);
-    }
+    await db.query(`DELETE FROM players WHERE playerName='${playerInfo['displayName']}'`);
 
     await db.query(`INSERT INTO players VALUES (
                 '${playerInfo['displayName']}', 
