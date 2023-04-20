@@ -5,4 +5,7 @@ h1 {
 h1:hover {background: rgba(43, 166, 203, 0.5); 
          display: table;}
 h1::selection {background: yellow;}
+
 body {background-color: pink;}
+
+#errorMessage {color: red;}
