@@ -16,13 +16,14 @@
 		<input type="submit" value="Search" id="searchButton" />
 	  </form>
 
-	  <p><img src="https://www.bungie.net{{emblemPath1}}" width=20px height=20px> {{playerName1}}</p>
-	  <p id="L1">Lifetime Triumph Score: {{lifetimeTriumph1}}</p>
-	  <p id="L2">Active Triumph Score: {{activeTriumph1}}</p>
-	  <p>Commendation Score: {{commendationScore1}}</p>
-	  <p>Guardian Rank: {{guardianRank1}}</p>
-	  <p>Seasonal Level: {{seasonalLevel1}}</p>
-	  <p>Time Played: {{timePlayed1}} Hours</p>
+	  <p id="errorMessage" {{displayError}}>{{errorMessage}}</p>
+	  <p {{displayInfo}}><img src="{{emblemPath1}}" width=20px height=20px> {{playerName1}}</p>
+	  <p id="L1" {{displayInfo}}>Lifetime Triumph Score: {{lifetimeTriumph1}}</p>
+	  <p id="L2" {{displayInfo}}>Active Triumph Score: {{activeTriumph1}}</p>
+	  <p {{displayInfo}}>Commendation Score: {{commendationScore1}}</p>
+	  <p {{displayInfo}}>Guardian Rank: {{guardianRank1}}</p>
+	  <p {{displayInfo}}>Seasonal Level: {{seasonalLevel1}}</p>
+	  <p {{displayInfo}}>Time Played: {{timePlayed1}} Hours</p>
 	  
 	</body>
 	<script src="app.js"></script> 
