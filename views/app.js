@@ -28,7 +28,7 @@ document.getElementById("searchButton").addEventListener("click", function(event
     }
   
     // Check for invalid username
-    if (!name.value || !/^[a-zA-Z0-9]{2,5}$/.test(name.value)) {
+    if (!name.value || !/^[a-zA-z0-9]*[a-zA-z][a-zA-z0-9]*$/.test(name.value)) {
       errorsFound = true;
       email.classList.add('error');
       const emailErr = document.createElement('li');
@@ -42,4 +42,4 @@ document.getElementById("searchButton").addEventListener("click", function(event
       error.classList.add('hide');
       name.classList.remove('error');
     }
-  }  
+  }
