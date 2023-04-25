@@ -110,6 +110,39 @@
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 <link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-black.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
+<style>
+	.dropbtn {
+                background-color: #25477d9a;
+                color: white;
+                padding: 16px;
+                font-size: 16px;
+                border: none;
+                border-radius: 15px;}
+
+            .dropdown {
+                position: relative;
+                display: inline-block;}
+
+            .dropdown-content {
+                display: none;
+                position: absolute;
+                background-color: #f1f1f1;
+                min-width: 160px;
+                box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+                z-index: 1;}
+
+            .dropdown-content a {
+                color: black;
+                padding: 12px 16px;
+                text-decoration: none;
+                display: block;}
+
+            .dropdown-content a:hover {background-color: #ddd;}
+
+            .dropdown:hover .dropdown-content {display: block;}
+
+            .dropdown:hover .dropbtn {background-color: #353a48fc;}
+</style>
 </head>
 <body>
 
@@ -179,6 +212,22 @@ function goButton() {
 <div class="w3-third">
   <div class="w3-card w3-container" style="min-height:460px">
   <h3>Leader Board:</h3><br>
+	  <div class="dropdown">
+                <button class="dropbtn">LeaderBoards</button>
+                <div class="dropdown-content">
+                  <a href="#">Lifetime Triumph Scores</a>
+                  <a href="#">Active Triupmh Scores</a>
+                  <a href="#">Commendation Scores</a>
+                  <a href="#">Seasonal</a>
+                  <a href="#">Timed Played</a>
+                </div>
+            </div> 
+                <table>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Name</th>
+                        <th>Score</th>
+                    </tr>
   </div>
 </div>
 </div>
