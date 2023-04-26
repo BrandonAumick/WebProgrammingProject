@@ -59,7 +59,7 @@ async function main() {
             renderVariables['displayInfo'] = 'hidden';
         }
 
-        res.render("index2", renderVariables);
+        res.render("index", renderVariables);
 
     });
 
@@ -131,7 +131,7 @@ async function main() {
         var playerInfo2 = getPlayerResponses[1];
     } catch (err) {
         //Sets the info to hidden and shows the error code
-        res.render("index2", {
+        res.render("index", {
             errorMessage: "Could not find player",
             displayInfo: 'hidden',
             displayError: 'shown'
