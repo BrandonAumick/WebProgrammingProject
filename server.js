@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const hbs = require('hbs');
 const mysql = require('mysql');
+const { resolve } = require("path/win32");
 const util = require('util');
 
 var myHeaders = new Headers();
@@ -16,46 +17,52 @@ async function main() {
     app.set("view engine", "html");
     app.engine('html', hbs.__express);
 
-    app.post('/', async (req, res) => {
-        
-        try {
-            var playerInfo = await getPlayer(req.body.name1);
-        } catch (err) {
-            res.render("index", {
-                errorMessage: "Could not find player",
-                emblemPath1: "https://mykimini.com/wp-content/uploads/blank-link.png",
-                playerName1: "",
-                lifetimeTriumph1: "", 
-                activeTriumph1: "",
-                commendationScore1: "",
-                guardianRank1: "",
-                seasonalLevel1: "",
-                timePlayed1: "",
-                displayInfo: 'hidden',
-                displayError: 'shown'
+    app.get('/', async (req, res) => {
+
+        let renderVariables = {};
+
+        if (typeof req.query.leaderboard !== 'undefined') {
+
+            let db = makeDb({
+                host: "localhost",
+                user: "root",
+                password: "&r!Xfy%te7uD#3UZ6S&C"
             });
-            return;
-        }
         
-        let playerStats = await getStats(playerInfo['memberId'], playerInfo['memberType']);
+            await db.query('USE destiny;');
 
-        addToDatabase(playerInfo, playerStats);
+            let board = await db.query(`SELECT playerName, ${req.query.leaderboard} FROM players ORDER BY ${req.query.leaderboard} DESC;`);
 
-        res.render("index", {
-            errorMessage: "",
-            emblemPath1: `https://www.bungie.net${playerStats['emblemPath']}`,
-            playerName1: `${playerInfo['displayName']}#${playerInfo['displayCode']}`,
-            lifetimeTriumph1: playerStats['lifetimeScore'], 
-            activeTriumph1: playerStats['activeScore'],
-            commendationScore1: playerStats['commendationScore'],
-            guardianRank1: playerStats['guardianRank'],
-            seasonalLevel1: playerStats['seasonalLevel'],
-            timePlayed1: playerStats['timePlayed'],
-            displayInfo: 'shown',
-            displayError: 'hidden'
-        });
+            let sendString = ""
+            for (score of board) {
+                sendString += `${score['playerName']}: ${score[req.query.leaderboard]}`
+                if (req.query.leaderboard == 'timePlayed') {sendString += ' Hours';}
+                sendString += '\n'
+            }
+
+            db.close();
+
+            renderVariables['leaderboardInfo'] = sendString;
+            renderVariables['leaderDisplay'] = 'shown';
+
+        } else {
+            renderVariables['leaderDisplay'] = 'hidden';
+        }
+
+        if (typeof req.query.player1 !== 'undefined' && typeof req.query.player2 !== 'undefined') {
+
+            loadedInfo = await loadPlayers(req.query.player1, req.query.player2);
+           
+            renderVariables = Object.assign({}, renderVariables, loadedInfo);
+
+        } else {
+            renderVariables['displayInfo'] = 'hidden';
+        }
+
+        res.render("index2", renderVariables);
 
     });
+
 
     // Start the web server
     app.listen(3000, function() {
@@ -63,9 +70,6 @@ async function main() {
     });
 }
 
-main();
-
- 
  
  async function getPlayer(playerName) {
  
@@ -118,6 +122,54 @@ main();
  
  }
 
+ async function loadPlayers(playerName1, playerName2) {
+    //Tries to search for a player in the API, if one isn't found an error will occur
+    try {
+        getPlayerResponses = [getPlayer(playerName1), getPlayer(playerName2)];
+        getPlayerResponses = await Promise.all(getPlayerResponses);
+        var playerInfo1 = getPlayerResponses[0];
+        var playerInfo2 = getPlayerResponses[1];
+    } catch (err) {
+        //Sets the info to hidden and shows the error code
+        res.render("index2", {
+            errorMessage: "Could not find player",
+            displayInfo: 'hidden',
+            displayError: 'shown'
+        });
+        return;
+    }
+
+    //Gets the player scores/stats
+    let playerStats1 = await getStats(playerInfo1['memberId'], playerInfo1['memberType']);
+    let playerStats2 = await getStats(playerInfo2['memberId'], playerInfo2['memberType']);
+
+    //Adds the player's info and stats to the database
+    addToDatabase(playerInfo1, playerStats1);
+    addToDatabase(playerInfo2, playerStats2);
+
+    //Returns all the player information, hides error, shows info
+    return {
+        emblemPath1: playerStats1['emblemPath'],
+        playerName1: `${playerInfo1['displayName']}#${playerInfo1['displayCode']}`,
+        lifetimeTriumph1: playerStats1['lifetimeScore'], 
+        activeTriumph1: playerStats1['activeScore'],
+        commendationScore1: playerStats1['commendationScore'],
+        guardianRank1: playerStats1['guardianRank'],
+        seasonalLevel1: playerStats1['seasonalLevel'],
+        timePlayed1: playerStats1['timePlayed'],
+        emblemPath2: playerStats2['emblemPath'],
+        playerName2: `${playerInfo2['displayName']}#${playerInfo2['displayCode']}`,
+        lifetimeTriumph2: playerStats2['lifetimeScore'], 
+        activeTriumph2: playerStats2['activeScore'],
+        commendationScore2: playerStats2['commendationScore'],
+        guardianRank2: playerStats2['guardianRank'],
+        seasonalLevel2: playerStats2['seasonalLevel'],
+        timePlayed2: playerStats2['timePlayed'],
+        displayInfo: 'shown',
+        displayError: 'hidden'
+    };
+ }
+
 
  function makeDb( config ) {
 
@@ -139,7 +191,7 @@ main();
     let db = makeDb({
         host: "localhost",
         user: "root",
-        password: ""
+        password: "&r!Xfy%te7uD#3UZ6S&C"
     });
 
     await db.query('USE destiny;');
@@ -157,3 +209,6 @@ main();
     db.close();
 
   }
+
+
+main();
