@@ -1,30 +1,212 @@
 <!DOCTYPE html>
-<html lang="span">
-	<head>
-		<meta charset="UTF-8">
-		<title>DestinyTheGame</title>
-		<link rel="stylesheet" href="style.css">
-	</head>
-	<body>
+<html lang="en">
+   <head>
+      <meta charset="UTF-8">
+      <title>DestinyTheGame</title>
+      <link rel="stylesheet" href="styles.css">
+<head>
+    <title>DestinyTheGame</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-black.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
 
-	   <form method="post">
-		<label for="name_input1">Enter name: </label>
-		<input
-		  id="name_input1"
-		  type="text"
-		  name="name1" />
-		<input type="submit" value="Search" id="searchButton" />
-	  </form>
+<!-- Header -->
+<header class="w3-container w3-theme w3-padding" id="myHeader">
+  <i onclick="w3_open()" class="fa fa-bars w3-xlarge w3-button w3-theme"></i> 
+  <div class="w3-center">
+  <h4>Destiny Stats</h4>
+  <h1 class="w3-xxxlarge w3-animate-bottom">Player Comparison</h1>
+    <div class="w3-padding-32">
+      <button class="w3-btn w3-xlarge w3-dark-grey w3-hover-light-grey" onclick="document.getElementById('id01').style.display='block'" style="font-weight:900;">Compare Now</button>
+    </div>
+  </div>
+</header>
 
-	  <p id="errorMessage" {{displayError}}>{{errorMessage}}</p>
-	  <p {{displayInfo}}><img src="{{emblemPath1}}" width=20px height=20px> {{playerName1}}</p>
-	  <p id="L1" {{displayInfo}}>Lifetime Triumph Score: {{lifetimeTriumph1}}</p>
-	  <p id="L2" {{displayInfo}}>Active Triumph Score: {{activeTriumph1}}</p>
-	  <p {{displayInfo}}>Commendation Score: {{commendationScore1}}</p>
-	  <p {{displayInfo}}>Guardian Rank: {{guardianRank1}}</p>
-	  <p {{displayInfo}}>Seasonal Level: {{seasonalLevel1}}</p>
-	  <p {{displayInfo}}>Time Played: {{timePlayed1}} Hours</p>
-	  
-	</body>
-	<script src="app.js"></script> 
-</html> 
+<!-- Modal -->
+<!-- Modal -->
+<div id="id01" class="w3-modal">
+    <div class="w3-modal-content w3-card-4 w3-animate-top">
+      <header class="w3-container w3-theme-l1"> 
+        <span onclick="document.getElementById('id01').style.display='none'"
+        class="w3-button w3-display-topright">×</span>
+        <h4>Enter player names to compare</h4>
+        <h5>Then press "Go!" <i class="fa fa-smile-o"></i></h5>
+      </header>
+      <form method="get">
+        <div class="w3-padding">
+            
+                <label for="fname">Player 1:</label>
+                <input type="text" id="player1" name="player1">
+
+                <label for="player2">Player 2:</label>
+                <input type="text" id="player2" name="player2">
+            
+        </div>
+        <input type="submit" value="Go!">
+    </form>
+
+<script>
+function goButton() {
+  document.getElementById("player1");
+  document.getElementById("player2");
+  System.out.print("working");
+}
+</script>
+      </footer>
+    </div>
+</div>
+
+<!--Player 1 info-->
+<div class="w3-row-padding w3-center w3-margin-top">
+<div class="w3-third">
+  <div class="w3-card w3-container" style="min-height:460px">
+    <h3>Player 1 Stats:</h3><br>
+    <p {{displayInfo}}><img src="https://www.bungie.net{{emblemPath1}}" width=20px height=20px> {{playerName1}}</p>
+	<p {{displayInfo}}>Lifetime Triumph Score: {{lifetimeTriumph1}}</p>
+	<p {{displayInfo}}>Active Triumph Score: {{activeTriumph1}}</p>
+	<p {{displayInfo}}>Commendation Score: {{commendationScore1}}</p>
+	<p {{displayInfo}}>Guardian Rank: {{guardianRank1}}</p>
+	<p {{displayInfo}}>Seasonal Level: {{seasonalLevel1}}</p>
+	<p {{displayInfo}}>Time Played: {{timePlayed1}} Hours</p>
+  
+ 
+  </div>
+</div>
+
+<!--Player 2 info-->
+<div class="w3-third">
+  <div class="w3-card w3-container" style="min-height:460px">
+    <h3>Player 2 Stats:</h3><br>
+    <p {{displayInfo}}><img src="https://www.bungie.net{{emblemPath2}}" width=20px height=20px> {{playerName2}}</p>
+	<p {{displayInfo}}>Lifetime Triumph Score: {{lifetimeTriumph2}}</p>
+	<p {{displayInfo}}>Active Triumph Score: {{activeTriumph2}}</p>
+	<p {{displayInfo}}>Commendation Score: {{commendationScore2}}</p>
+	<p {{displayInfo}}>Guardian Rank: {{guardianRank2}}</p>
+	<p {{displayInfo}}>Seasonal Level: {{seasonalLevel2}}</p>
+	<p {{displayInfo}}>Time Played: {{timePlayed2}} Hours</p>
+  </div>
+</div>
+
+<!-- Leaderboard -->
+<div class="w3-third">
+  <div class="w3-card w3-container" style="min-height:460px" id="leaderScrollDiv">
+    <div class="dropdown">
+        <button class="dropbtn">LeaderBoards</button>
+        <div class="dropdown-content">
+          <a href="/?leaderboard=lifetimeTriumph">Lifetime Triumph Scores</a>
+          <a href="/?leaderboard=activeTriumph">Active Triupmh Scores</a>
+          <a href="/?leaderboard=commendationScore">Commendation Scores</a>
+          <a href="/?leaderboard=seasonalLevel">Seasonal Level</a>
+          <a href="/?leaderboard=timePlayed">Timed Played</a>
+        </div>
+    </div> 
+        <table>
+            <tr>
+                <th>Rank</th>
+                <th>Name</th>
+                <th>Score</th>
+            </tr>
+        </table>
+  <p id="leaderText" {{leaderDisplay}}>{{leaderboardInfo}}</p>
+</div>
+  </div>
+</div>
+
+
+
+<!-- Footer -->
+<footer class="w3-container w3-theme-dark w3-padding-16">
+  <h3>Info</h3>
+  <p>Destiny Official Site: <a href="https://www.bungie.net/7" target="_blank">Here</a></p>
+  <div style="position:relative;bottom:55px;" class="w3-tooltip w3-right">
+    
+  </div>
+ 
+</footer>
+
+<!-- Script for Sidebar, Tabs, Accordions, Progress bars and slideshows -->
+<script>
+// Side navigation
+function w3_open() {
+  var x = document.getElementById("mySidebar");
+  x.style.width = "100%";
+  x.style.fontSize = "40px";
+  x.style.paddingTop = "10%";
+  x.style.display = "block";
+}
+function w3_close() {
+  document.getElementById("mySidebar").style.display = "none";
+}
+
+// Tabs
+function openCity(evt, cityName) {
+  var i;
+  var x = document.getElementsByClassName("city");
+  for (i = 0; i < x.length; i++) {
+    x[i].style.display = "none";
+  }
+  var activebtn = document.getElementsByClassName("testbtn");
+  for (i = 0; i < x.length; i++) {
+    activebtn[i].className = activebtn[i].className.replace(" w3-dark-grey", "");
+  }
+  document.getElementById(cityName).style.display = "block";
+  evt.currentTarget.className += " w3-dark-grey";
+}
+
+var mybtn = document.getElementsByClassName("testbtn")[0];
+mybtn.click();
+
+// Accordions
+function myAccFunc(id) {
+  var x = document.getElementById(id);
+  if (x.className.indexOf("w3-show") == -1) {
+    x.className += " w3-show";
+  } else { 
+    x.className = x.className.replace(" w3-show", "");
+  }
+}
+
+// Slideshows
+var slideIndex = 1;
+
+function plusDivs(n) {
+  slideIndex = slideIndex + n;
+  showDivs(slideIndex);
+}
+
+function showDivs(n) {
+  var x = document.getElementsByClassName("mySlides");
+  if (n > x.length) {slideIndex = 1}    
+  if (n < 1) {slideIndex = x.length} ;
+  for (i = 0; i < x.length; i++) {
+    x[i].style.display = "none";  
+  }
+  x[slideIndex-1].style.display = "block";  
+}
+
+showDivs(1);
+
+// Progress Bars
+function move() {
+  var elem = document.getElementById("myBar");   
+  var width = 5;
+  var id = setInterval(frame, 10);
+  function frame() {
+    if (width == 100) {
+      clearInterval(id);
+    } else {
+      width++; 
+      elem.style.width = width + '%'; 
+      elem.innerHTML = width * 1  + '%';
+    }
+  }
+}
+</script>
+
+</body>
+</html>
