@@ -4,7 +4,7 @@
     white-space: pre-line;
 }
 
-#leaderScrollDiv {
+#leaderscroll {
     overflow-x: scroll;
     overflow-y: auto;}
 
