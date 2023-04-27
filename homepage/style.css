@@ -8,10 +8,10 @@
     overflow-y: auto;}
 
 .dropbtn {
-            background-color: #25477d9a;
+            background-color: #0b0b0b9;
             color: white;
             padding: 16px;
-            font-size: 14px;
+            font-size: 16px;
             border: none;
             border-radius: 15px;}
     
@@ -37,7 +37,7 @@
     
 .dropdown:hover .dropdown-content {display: block;}
     
-.dropdown:hover .dropbtn {background-color: #353a48fc;} 
+.dropdown:hover .dropbtn {background-color: #000000fc;} 
 
 table {
     width: 100%;
