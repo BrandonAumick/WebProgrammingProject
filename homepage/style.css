@@ -4,6 +4,8 @@
     white-space: pre-line;}
 
 #leaderscroll {
+    height: 50px;
+    overflow: auto;
     overflow-x: scroll;
     overflow-y: auto;}
 
