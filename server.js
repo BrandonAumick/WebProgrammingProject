@@ -33,16 +33,24 @@ async function main() {
 
             let board = await db.query(`SELECT playerName, ${req.query.leaderboard} FROM players ORDER BY ${req.query.leaderboard} DESC;`);
 
-            let sendString = ""
+            let leaderNameString = "";
+            let leaderScoreString ="";
+            let rankCounterString = "";
+            let rankCounter = 1;
             for (score of board) {
-                sendString += `${score['playerName']}: ${score[req.query.leaderboard]}`
-                if (req.query.leaderboard == 'timePlayed') {sendString += ' Hours';}
-                sendString += '\n'
+                leaderNameString += `${score['playerName']}\n`;
+                leaderScoreString += score[req.query.leaderboard];
+                if (req.query.leaderboard == 'timePlayed') {leaderScoreString += ' Hours';}
+                leaderScoreString += '\n';
+                rankCounterString += `${rankCounter}.\n`;
+                rankCounter++;
             }
 
             db.close();
 
-            renderVariables['leaderboardInfo'] = sendString;
+            renderVariables['leaderRank'] = rankCounterString;
+            renderVariables['leaderName'] = leaderNameString;
+            renderVariables['leaderScore'] = leaderScoreString;
             renderVariables['leaderDisplay'] = 'shown';
 
         } else {
