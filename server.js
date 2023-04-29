@@ -26,7 +26,7 @@ async function main() {
             let db = makeDb({
                 host: "localhost",
                 user: "root",
-                password: "&r!Xfy%te7uD#3UZ6S&C"
+                password: ""
             });
         
             await db.query('USE destiny;');
