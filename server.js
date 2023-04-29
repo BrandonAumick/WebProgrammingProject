@@ -131,11 +131,7 @@ async function main() {
         var playerInfo2 = getPlayerResponses[1];
     } catch (err) {
         //Sets the info to hidden and shows the error code
-        res.render("index", {
-            errorMessage: "Could not find player",
-            displayInfo: 'hidden',
-            displayError: 'shown'
-        });
+        console.log('player find failed');
         return;
     }
 
