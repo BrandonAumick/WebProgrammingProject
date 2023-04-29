@@ -1,5 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">  
+<html lang="en">
+   <head>
+      <meta charset="UTF-8">
+      <title>DestinyTheGame</title>
+      <link rel="stylesheet" href="styles.css">
 <head>
     <title>DestinyTheGame</title>
     <meta charset="UTF-8">
@@ -41,19 +45,25 @@
 
                 <label for="player2">Player 2:</label>
                 <input type="text" id="player2" name="player2">
+
+                
             
         </div>
-        <input type="submit" value="Go!">
+        
     </form>
 
-	<script>
-	  function goButton() {
-  	  document.getElementById("player1");
-  	  document.getElementById("player2");
-  	  System.out.print("working");
-	  }
-	</script>
+    <p>&nbsp;<input type="submit" value="Go!" id="playerSubmit"></p>
+    <div id="errorMessage" hidden></div>
+    
 
+<script>
+function goButton() {
+  document.getElementById("player1");
+  document.getElementById("player2");
+  System.out.print("working");
+}
+</script>
+      </footer>
     </div>
 </div>
 
@@ -89,30 +99,28 @@
 </div>
 
 <!-- Leaderboard -->
-<div class="w3-third">
-  <div class="w3-card w3-container" style="min-height:460px" id="leaderScrollDiv">
+<div class="w3-third" id="leaderScrollDiv">
+  <div class="w3-card w3-container" style="min-height:460px">
     <div class="dropdown">
         <button class="dropbtn">LeaderBoards</button>
         <div class="dropdown-content">
-          <a href="/?leaderboard=lifetimeTriumph">Lifetime Triumph Scores</a>
-          <a href="/?leaderboard=activeTriumph">Active Triupmh Scores</a>
-          <a href="/?leaderboard=commendationScore">Commendation Scores</a>
-          <a href="/?leaderboard=seasonalLevel">Seasonal Level</a>
-          <a href="/?leaderboard=timePlayed">Timed Played</a>
+          <a onclick="leaderGet('lifetimeTriumph')">Lifetime Triumph Scores</a>
+          <a onclick="leaderGet('activeTriumph')">Active Triupmh Scores</a>
+          <a onclick="leaderGet('commendationScore')">Commendation Scores</a>
+          <a onclick="leaderGet('seasonalLevel')">Seasonal Level</a>
+          <a onclick="leaderGet('timePlayed')">Timed Played</a>
         </div>
-    </div>
-    <div>
+    </div> 
         <table>
             <tr>
                 <th>Rank</th>
-                <th>Player Name</th>
+                <th>Name</th>
                 <th>Score</th>
             </tr>
         </table>
-  	<p id="leaderText" {{leaderDisplay}}>{{leaderboardInfo}}</p>
-    </div>
+  <p id="leaderText" {{leaderDisplay}}>{{leaderboardInfo}}</p>
+</div>
   </div>
- </div>
 </div>
 
 
@@ -129,82 +137,100 @@
 
 <!-- Script for Sidebar, Tabs, Accordions, Progress bars and slideshows -->
 <script>
-// Side navigation
-function w3_open() {
-  var x = document.getElementById("mySidebar");
-  x.style.width = "100%";
-  x.style.fontSize = "40px";
-  x.style.paddingTop = "10%";
-  x.style.display = "block";
-}
-function w3_close() {
-  document.getElementById("mySidebar").style.display = "none";
-}
 
-// Tabs
-function openCity(evt, cityName) {
-  var i;
-  var x = document.getElementsByClassName("city");
-  for (i = 0; i < x.length; i++) {
-    x[i].style.display = "none";
+  function leaderGet(type) {
+
+      sessionStorage.setItem('leaderboard', type);
+
+      if (sessionStorage.getItem('name1')) {
+
+        window.location.href = `http://localhost:3000/?player1=${sessionStorage.getItem('name1')}&player2=${sessionStorage.getItem('name2')}&leaderboard=${type}`;
+
+      } else {
+
+        window.location.href = `http://localhost:3000/?leaderboard=${type}`;
+
+      }
+      event.preventDefault();
   }
-  var activebtn = document.getElementsByClassName("testbtn");
-  for (i = 0; i < x.length; i++) {
-    activebtn[i].className = activebtn[i].className.replace(" w3-dark-grey", "");
+
+  // Side navigation
+  function w3_open() {
+    var x = document.getElementById("mySidebar");
+    x.style.width = "100%";
+    x.style.fontSize = "40px";
+    x.style.paddingTop = "10%";
+    x.style.display = "block";
   }
-  document.getElementById(cityName).style.display = "block";
-  evt.currentTarget.className += " w3-dark-grey";
-}
-
-var mybtn = document.getElementsByClassName("testbtn")[0];
-mybtn.click();
-
-// Accordions
-function myAccFunc(id) {
-  var x = document.getElementById(id);
-  if (x.className.indexOf("w3-show") == -1) {
-    x.className += " w3-show";
-  } else { 
-    x.className = x.className.replace(" w3-show", "");
+  function w3_close() {
+    document.getElementById("mySidebar").style.display = "none";
   }
-}
 
-// Slideshows
-var slideIndex = 1;
-
-function plusDivs(n) {
-  slideIndex = slideIndex + n;
-  showDivs(slideIndex);
-}
-
-function showDivs(n) {
-  var x = document.getElementsByClassName("mySlides");
-  if (n > x.length) {slideIndex = 1}    
-  if (n < 1) {slideIndex = x.length} ;
-  for (i = 0; i < x.length; i++) {
-    x[i].style.display = "none";  
+  // Tabs
+  function openCity(evt, cityName) {
+    var i;
+    var x = document.getElementsByClassName("city");
+    for (i = 0; i < x.length; i++) {
+      x[i].style.display = "none";
+    }
+    var activebtn = document.getElementsByClassName("testbtn");
+    for (i = 0; i < x.length; i++) {
+      activebtn[i].className = activebtn[i].className.replace(" w3-dark-grey", "");
+    }
+    document.getElementById(cityName).style.display = "block";
+    evt.currentTarget.className += " w3-dark-grey";
   }
-  x[slideIndex-1].style.display = "block";  
-}
 
-showDivs(1);
+  var mybtn = document.getElementsByClassName("testbtn")[0];
+  mybtn.click();
 
-// Progress Bars
-function move() {
-  var elem = document.getElementById("myBar");   
-  var width = 5;
-  var id = setInterval(frame, 10);
-  function frame() {
-    if (width == 100) {
-      clearInterval(id);
-    } else {
-      width++; 
-      elem.style.width = width + '%'; 
-      elem.innerHTML = width * 1  + '%';
+  // Accordions
+  function myAccFunc(id) {
+    var x = document.getElementById(id);
+    if (x.className.indexOf("w3-show") == -1) {
+      x.className += " w3-show";
+    } else { 
+      x.className = x.className.replace(" w3-show", "");
     }
   }
-}
+
+  // Slideshows
+  var slideIndex = 1;
+
+  function plusDivs(n) {
+    slideIndex = slideIndex + n;
+    showDivs(slideIndex);
+  }
+
+  function showDivs(n) {
+    var x = document.getElementsByClassName("mySlides");
+    if (n > x.length) {slideIndex = 1}    
+    if (n < 1) {slideIndex = x.length} ;
+    for (i = 0; i < x.length; i++) {
+      x[i].style.display = "none";  
+    }
+    x[slideIndex-1].style.display = "block";  
+  }
+
+  showDivs(1);
+
+  // Progress Bars
+  function move() {
+    var elem = document.getElementById("myBar");   
+    var width = 5;
+    var id = setInterval(frame, 10);
+    function frame() {
+      if (width == 100) {
+        clearInterval(id);
+      } else {
+        width++; 
+        elem.style.width = width + '%'; 
+        elem.innerHTML = width * 1  + '%';
+      }
+    }
+  }
 </script>
+<script src="app.js"></script> 
 
 </body>
 </html>
